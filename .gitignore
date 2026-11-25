@@ -1,0 +1,11 @@
+node_modules
+.wrangler
+.dev.vars
+
+# Interne Notizen, nur lokal
+AGENTS.md
+BRIEF.md
+STATE.md
+ERKLAEREN.md
+CLAUDE.md
+docs/loop/

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objection Cards | Battlecards from real sales calls</title>
+<meta name="description" content="Turn sales call transcripts into objection battlecards. Every quote is checked word for word against the transcript before it reaches a card. This page and its server store nothing.">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<p class="demo-note" id="demo-note" role="note" hidden></p>
+
+<header class="top">
+  <h1>Objection Cards</h1>
+  <p class="lede">Paste or upload sales call transcripts. The page finds seller and buyer, pulls out what buyers said (problems, objections, questions, reasons to move or walk away) and turns the objections into battlecards. Every quote is checked word for word against the transcript before it can reach a card. This page and its server store nothing.</p>
+</header>
+
+<main>
+<section class="card no-print" aria-labelledby="input-title">
+  <h2 id="input-title">Transcripts</h2>
+  <label for="paste" class="hint">Paste one or more transcripts. Separate them with a line like <code>=== call-a.txt ===</code>. Lines look like <code>Name: text</code> or <code>[00:01] Name (AE): text</code>.</label>
+  <textarea id="paste" rows="8" spellcheck="false"></textarea>
+  <div class="row">
+    <label for="files">Or upload files (.txt, .vtt, .srt)</label>
+    <input type="file" id="files" multiple accept=".txt,.vtt,.srt">
+  </div>
+  <ul id="file-list" class="file-list"></ul>
+  <p class="hint">Only use transcripts you are allowed to process.</p>
+  <p class="hint" id="input-note" role="status"></p>
+  <div class="row">
+    <button type="button" class="ghost" id="load-demo">Load demo transcripts</button>
+    <button type="button" class="ghost" id="clear">Clear</button>
+    <button type="button" id="build">Build battlecards</button>
+  </div>
+  <div class="row">
+    <label class="check"><input type="checkbox" id="use-ai"> Also use Workers AI</label>
+    <span class="hint">Sends the text of each turn to Cloudflare Workers AI (US provider). Speaker labels are removed, but names, companies or emails inside the text are sent as written. This page and its server store nothing.</span>
+  </div>
+  <p class="hint" id="ai-note" role="status"></p>
+</section>
+
+<section class="card no-print" aria-labelledby="calls-title">
+  <h2 id="calls-title">Calls</h2>
+  <p class="hint">Roles come from labels like “(AE)” or “(Prospect)”, otherwise from typical seller phrases. Change a role here if it is wrong.</p>
+  <div class="scroll"><table id="calls"></table></div>
+</section>
+
+<section class="card no-print" aria-labelledby="check-title">
+  <h2 id="check-title">Quote check</h2>
+  <p class="counter" id="counter">Findings 0 · Dropped 0 (rule 0, AI 0, test 0)</p>
+  <p class="hint">A claim becomes a finding only if its quote appears word for word in one turn, said by the buyer (answers: by the seller). Next steps and loss reasons must also say so (“let's book”, “we'll pass” …), otherwise they are dropped as kind_mismatch. Everything else is dropped with a reason.</p>
+  <div class="row"><button type="button" class="ghost" id="tamper">Verification check: inject 3 fabricated claims</button></div>
+  <details id="dropped-details">
+    <summary>Dropped claims</summary>
+    <div class="scroll" id="dropped"></div>
+  </details>
+</section>
+
+<section class="card no-print" aria-labelledby="export-title">
+  <h2 id="export-title">Battlecards</h2>
+  <div class="row">
+    <button type="button" class="ghost" id="download">Download Markdown</button>
+    <button type="button" class="ghost" id="copy">Copy Markdown</button>
+    <button type="button" class="ghost" id="print">Print</button>
+    <span class="hint" id="export-note" role="status"></span>
+  </div>
+  <p class="hint">Export contains buyer quotes and file names — check before sharing.</p>
+</section>
+
+<section id="cards" aria-label="Battlecards"></section>
+
+<section class="card no-print" id="insights" aria-labelledby="insights-title">
+  <h2 id="insights-title">In the buyer's words</h2>
+  <div id="insights-body"></div>
+</section>
+</main>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

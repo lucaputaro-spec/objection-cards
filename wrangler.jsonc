@@ -1,0 +1,26 @@
+{
+  // Nur lokal (npm run dev). Nicht deployt.
+  // Der Worker hat genau eine Aufgabe: /api/extract, die optionale AI-Extraktion
+  // von Zitaten. Alles andere läuft im Browser. Jedes AI-Zitat wird dort gegen
+  // das Transkript geprüft (verifyClaims), bevor es auf eine Karte darf.
+  // Workers AI Free: Beim Überschreiten gibt es Fehler, keine Rechnung. Dann
+  // bleiben die Regeln (Fallback in src/extract.ts).
+  "name": "objection-cards",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "ai": { "binding": "AI" },
+  // Bremse je Besucher: der Browser schickt höchstens 8 Gespräche pro Lauf, 24 pro Sitzung.
+  // namespace_id ist kontoweit geteilt. Belegt: 4711 GTM OS, 4712 Lead Table + Sync Board, 4713 SDR Radar, 4714 Revenue Loop, 4715 Objection Cards.
+  "ratelimits": [
+    { "name": "LIMITER", "namespace_id": "4715", "simple": { "limit": 10, "period": 60 } }
+  ],
+  "vars": { "AI_MODEL": "@cf/meta/llama-4-scout-17b-16e-instruct" },
+  // Aus, damit keine Transkript-Inhalte in Logs landen.
+  "observability": { "enabled": false }
+}
