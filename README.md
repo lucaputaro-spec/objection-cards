@@ -1,5 +1,7 @@
 # Objection Cards: battlecards from real sales calls, every quote checked
 
+Live demo (rules only, AI switched off): https://objection-cards.lucaputaro.workers.dev
+
 Paste or upload sales call transcripts (.txt, .vtt, .srt). The page tells
 seller and buyer apart, skips calls that are not sales calls (with the
 reason), and pulls out what buyers actually said: problems, desired outcomes,
