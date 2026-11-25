@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
+    "dev:ai": "wrangler dev --var AI_ENABLED:true",
     "deploy": "wrangler deploy",
     "preview": "node scripts/serve.mjs",
     "test:run": "vitest run",

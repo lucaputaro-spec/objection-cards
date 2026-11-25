@@ -1,5 +1,6 @@
 {
-  // Nur lokal (npm run dev). Nicht deployt.
+  // Online nur als Demo: AI_ENABLED steht auf "false", der Worker lehnt /api/extract ab.
+  // Lokal mit AI: npm run dev:ai (setzt AI_ENABLED=true nur für diesen Lauf).
   // Der Worker hat genau eine Aufgabe: /api/extract, die optionale AI-Extraktion
   // von Zitaten. Alles andere läuft im Browser. Jedes AI-Zitat wird dort gegen
   // das Transkript geprüft (verifyClaims), bevor es auf eine Karte darf.
@@ -20,7 +21,7 @@
   "ratelimits": [
     { "name": "LIMITER", "namespace_id": "4715", "simple": { "limit": 10, "period": 60 } }
   ],
-  "vars": { "AI_MODEL": "@cf/meta/llama-4-scout-17b-16e-instruct" },
+  "vars": { "AI_MODEL": "@cf/meta/llama-4-scout-17b-16e-instruct", "AI_ENABLED": "false" },
   // Aus, damit keine Transkript-Inhalte in Logs landen.
   "observability": { "enabled": false }
 }

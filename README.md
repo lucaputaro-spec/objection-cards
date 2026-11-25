@@ -62,7 +62,8 @@ contains buyer quotes and file names, so check it before sharing.
 ```bash
 npm install
 npm run preview   # static server on http://127.0.0.1:8788, no login, rules only
-npm run dev       # with the Worker and Workers AI, needs a Wrangler login
+npm run dev       # the Worker as deployed: AI switched off (AI_ENABLED=false)
+npm run dev:ai    # the Worker with Workers AI, needs a Wrangler login
 ```
 
 ## Checks
@@ -71,6 +72,7 @@ npm run dev       # with the Worker and Workers AI, needs a Wrangler login
 npm run test:run
 npm run typecheck
 npm run lint
+grep -q "\"AI_ENABLED\": \"false\"" wrangler.jsonc
 ```
 
 ## Structure

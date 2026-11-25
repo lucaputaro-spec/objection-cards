@@ -365,3 +365,12 @@ $("#download").addEventListener("click", download);
 $("#copy").addEventListener("click", copy);
 $("#print").addEventListener("click", () => window.print());
 render();
+
+// Das AI-Häkchen erscheint nur, wenn der Server AI ausdrücklich freigibt
+// (AI_ENABLED = "true"). Online-Demo und Vorschau-Server: kein Häkchen, nur Regeln.
+fetch("/api/status")
+  .then((r) => (r.ok ? r.json() : null))
+  .then((s) => {
+    if (s && s.ai === true) $("#ai-row").hidden = false;
+  })
+  .catch(() => {});

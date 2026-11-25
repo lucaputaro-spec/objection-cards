@@ -7,7 +7,10 @@ const fakeAi = (answer: unknown) => ({ run: async () => ({ response: answer }) }
 const input = { turns: [{ i: 0, role: "seller", text: "We help teams." }, { i: 1, role: "buyer", text: "That is too expensive for us." }] };
 
 type Env = Parameters<typeof worker.fetch>[1];
-const call = (req: Request, env: Partial<Env> = {}) => worker.fetch(req as Parameters<typeof worker.fetch>[0], { ASSETS: assets, ...env } as Env);
+// Standard in diesen Tests: AI freigegeben, damit die übrigen Prüfungen greifen.
+// Der Aus-Zustand (Online-Demo) steht im eigenen Block unten.
+const call = (req: Request, env: Partial<Env> = {}) =>
+  worker.fetch(req as Parameters<typeof worker.fetch>[0], { ASSETS: assets, AI_ENABLED: "true", ...env } as Env);
 const post = (body: string, headers: Record<string, string> = {}) =>
   new Request("https://demo.test/api/extract", { method: "POST", body, headers: { "content-type": "application/json", ...headers } });
 
@@ -92,4 +95,27 @@ describe("/api/extract", () => {
   it("answers 400 without usable turns", async () => {
     expect((await call(post(JSON.stringify({ turns: [] })))).status).toBe(400);
   });
+});
+
+describe("AI switch (online demo)", () => {
+  const run = async () => {
+    let called = false;
+    const ai = { run: async () => { called = true; return { response: '{"claims":[]}' }; } } as unknown as Ai;
+    return { ai, wasCalled: () => called };
+  };
+
+  it("refuses /api/extract with 403 and never calls the model when AI_ENABLED is missing or not \"true\"", async () => {
+    for (const flag of [undefined, "false", "TRUE", "1", ""]) {
+      const { ai, wasCalled } = await run();
+      const res = await call(post(JSON.stringify(input), { origin: "https://demo.test" }), { AI: ai, AI_MODEL: "m", AI_ENABLED: flag });
+      expect(res.status).toBe(403);
+      expect(wasCalled()).toBe(false);
+    }
+  });
+
+  it("reports the switch on GET /api/status", async () => {
+    expect(await (await call(new Request("https://demo.test/api/status"), { AI_ENABLED: "false" })).json()).toEqual({ ai: false });
+    expect(await (await call(new Request("https://demo.test/api/status"), { AI_ENABLED: "true" })).json()).toEqual({ ai: true });
+  });
+
 });

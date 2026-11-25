@@ -1,8 +1,8 @@
 // Einstiegspunkt. Der Worker liefert die Seite aus und hat genau eine
-// Schnittstelle: POST /api/extract (optionale AI-Extraktion). Gespeichert und
+// Schnittstellen: GET /api/status und POST /api/extract (optionale AI-Extraktion). Gespeichert und
 // geloggt wird nichts, Transkripte bleiben im Browser. Prüfmuster aus Revenue Loop.
 
-import { extract, readInput, type AiEnv } from "./extract";
+import { aiEnabled, extract, readInput, type AiEnv } from "./extract";
 
 interface Env extends AiEnv {
   ASSETS: Fetcher;
@@ -30,8 +30,11 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
+    if (url.pathname === "/api/status") return json({ ai: aiEnabled(env) });
     if (url.pathname !== "/api/extract") return json({ error: "Unknown endpoint." }, 404);
     if (request.method !== "POST") return json({ error: "Use POST." }, 405);
+    // Riegel: ohne AI_ENABLED = "true" geht kein Text an Workers AI, egal was der Browser schickt.
+    if (!aiEnabled(env)) return json({ error: "AI is switched off in this demo. The rules still work." }, 403);
 
     // Kein Origin-Header (z. B. curl) ist erlaubt. "null" oder ein ungültiger Wert ergibt 403, nicht 500.
     const origin = request.headers.get("origin");

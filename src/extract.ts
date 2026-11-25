@@ -6,7 +6,12 @@
 export interface AiEnv {
   AI?: Ai;
   AI_MODEL?: string;
+  // Nur der Text "true" schaltet AI frei. Fehlt die Variable oder steht etwas
+  // anderes drin, bleibt AI aus (Online-Demo).
+  AI_ENABLED?: string;
 }
+
+export const aiEnabled = (env: AiEnv): boolean => env.AI_ENABLED === "true";
 
 export interface ExtractTurn {
   i: number;
