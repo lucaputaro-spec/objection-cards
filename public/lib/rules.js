@@ -72,8 +72,10 @@ export function isNextStep(sentence) {
 }
 
 /**
- * Passt ein geprüftes Zitat zu seiner Art? Nur next_step und loss_reason
- * haben eine Bedingung, alle anderen Arten passen immer.
+ * Passt ein geprüftes Zitat zu seiner Art? next_step, loss_reason und
+ * question haben eine Bedingung, alle anderen Arten passen immer. Eine Frage
+ * muss in einem Satz stehen, der mit „?“ endet — „that is too expensive“ ist
+ * keine Frage, auch wenn die AI es so nennt.
  * @param {Kind} kind
  * @param {string} quote das Original aus dem Transkript
  * @param {string} sentence der Satz bzw. die Sätze, in denen das Zitat steht
@@ -81,6 +83,7 @@ export function isNextStep(sentence) {
 export function kindFits(kind, quote, sentence) {
   if (kind === "next_step") return NEXT_STEP.test(plain(quote)) && isNextStep(sentence);
   if (kind === "loss_reason") return LOSS.test(plain(quote));
+  if (kind === "question") return /\?["'”’)]*\s*$/.test(sentence);
   return true;
 }
 

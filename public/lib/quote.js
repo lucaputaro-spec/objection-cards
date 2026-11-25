@@ -295,7 +295,9 @@ export function verifyClaims(transcripts, claims) {
       const detail =
         kind === "next_step"
           ? "quote is not a next step: needs book, schedule, a calendar invite, a pilot, the contract or proposal, and no loss or “send me something” in the sentence"
-          : "quote does not state a loss: needs “we'll pass”, “not moving forward”, “staying with” or similar";
+          : kind === "question"
+            ? "quote is not a question: the sentence it stands in does not end with “?”"
+            : "quote does not state a loss: needs “we'll pass”, “not moving forward”, “staying with” or similar";
       drop(claim, t.fileName, "kind_mismatch", detail);
       continue;
     }

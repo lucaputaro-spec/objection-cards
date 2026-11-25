@@ -104,6 +104,16 @@ describe("verifyClaims", () => {
     expect(verifyClaims([lost], [claim("we'll pass for now", { transcriptId: lost.id, kind: "loss_reason" })]).findings[0]?.kind).toBe("loss_reason");
   });
 
+  it("accepts a question only if its sentence ends with a question mark", () => {
+    const q = call("A (AE): We help teams with pricing.\nB (Buyer): How long does onboarding take? Honestly that is too expensive.");
+    const ok = verifyClaims([q], [claim("How long does onboarding take", { transcriptId: q.id, kind: "question", category: "other" })]);
+    expect(ok.findings[0]?.kind).toBe("question");
+    const bad = verifyClaims([q], [claim("that is too expensive", { transcriptId: q.id, kind: "question", category: "other" })]);
+    expect(bad.findings).toEqual([]);
+    expect(bad.dropped.map((d) => d.reason)).toEqual(["kind_mismatch"]);
+    expect(bad.dropped[0]?.detail).toContain("not a question");
+  });
+
   it("drops missing quotes, unknown kinds and unknown transcripts", () => {
     const { dropped } = verifyClaims([t], [claim(42), claim("the price is too high", { kind: "rumour" }), claim("the price is too high", { transcriptId: "nope" })]);
     expect(dropped.map((d) => d.reason)).toEqual(["no_quote", "unknown_kind", "unknown_transcript"]);
